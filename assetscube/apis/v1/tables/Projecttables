@@ -1,0 +1,45 @@
+CREATE SCHEMA ac;
+
+---Login table
+CREATE TABLE ac.userlogin (
+    userid 		               varchar(100) NOT NULL,
+	username    		       varchar(100),  --firebase. User.displayname
+    useremail                  varchar(100),
+    userpassword               varchar(1000),
+    userstatus		           varchar(2) NOT NULL, --> (A- Active, B-Blocked, D-Deleted)
+    --logintype                  varchar(2) NOT NULL,  --> (T - Thirdparty, S - Standalone)
+    --usertype                   varchar(2) NOT NULL,  --> (C - COMPANY, I - individual)    
+    siteid                     varchar(20) NOT NULL,
+    userstatlstupdt	           timestamptz NOT NULL,    
+    octime			           timestamptz NOT NULL,
+    lmtime			           timestamptz NOT NULL,
+    CONSTRAINT uid PRIMARY KEY (userid, siteid)  
+    );
+
+-- Creation of Admin user
+INSERT INTO ac.userlogin (userid,username,useremail,userpassword,userstatus,logintype,usertype,siteid,userstatlstupdt,octime,lmtime)
+VALUES ('fsvV7CG2yDZsBt0ZsNMgCnVZgl02','admin','nat@gmail.com','','A','T','I','ac',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP);
+
+INSERT INTO ac.userlogin (userid,username,useremail,userpassword,userstatus,logintype,usertype,userstatlstupdt,octime,lmtime)
+VALUES ('userid1','testuser@gmail.com','testuser@gmail.com','testpas1!','A','S','I','ac',CURRENT_TIMESTAMP,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP);
+
+---Secret key detail table
+
+CREATE TABLE ac.secrettkn (
+	secretcode 		            varchar(100) NOT NULL CONSTRAINT secretcode PRIMARY KEY, 
+    seccdid 		            varchar(30) NOT NULL,  --> DDMMYYYYHHMMSS
+    secoctime			        timestamp NOT NULL
+    );
+INSERT INTO ac.secrettkn VALUES ('secret01','31082019193003',CURRENT_TIMESTAMP)
+
+-- Login history
+CREATE TABLE ac.loginh (
+    userid 		               varchar(100) NOT NULL,
+ --   logintype                  varchar(2) NOT NULL,  --> based on admin user (T - Thirdparty, S - Standalone)
+--    usertype                   varchar(2) NOT NULL, --> based on admin user (C - Thirdparty COMPANY, I - Thirdparty individual, S - Standalone Company)
+    ipaddress                  varchar(25),
+    sessionid                  varchar(100),
+    siteid                     varchar(100),  --> nc - Nawalcube, dv - developer, au - auth
+    logintime                  timestamptz NOT NULL, 
+    logoutime                  timestamptz 
+);
