@@ -1,4 +1,4 @@
-from fastapi import Header
+from fastapi import Header, Request
 from pydantic import BaseModel
 import hashlib
 from datetime import datetime, timedelta
@@ -10,10 +10,14 @@ class MyHeaderData (BaseModel):
     siteid: str
 
 
-def get_header_data(siteid: str = Header(None)) -> MyHeaderData:
-    print(siteid)
-    
-    myhd = {'siteid': siteid}
+def get_header_data(
+        request: Request,
+        siteid: str = Header(None),
+        ) -> MyHeaderData:
+    print('domain - ', request.url.hostname)
+    print('printingsiteid'+siteid)
+
+    myhd = {'siteid': siteid}    
     return myhd
 
 

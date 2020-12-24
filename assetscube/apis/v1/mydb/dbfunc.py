@@ -17,7 +17,8 @@ CON_STR = [{'host':'127.0.0.1', 'database': 'postgres','user':'postgres','passwo
           ]
 
 #mycon: asyncpg.Connection
-queries =  aiosql.from_path("/home/natrayan/projects/fseed_backend/assetscube/apis/v1/mydb/sqlqueries","asyncpg")
+queries =  aiosql.from_path("/home/nirudhi/projects/svelte_backend/assetscube/apis/v1/mydb/sqlqueries","asyncpg")
+
 mypool: asyncpg.pool
 
 async def qry_initialise(): 

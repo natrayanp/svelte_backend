@@ -1,4 +1,6 @@
 from fastapi import APIRouter, Depends, Request, HTTPException, status, Header
+
+
 from ..apivalidator.apivalidators import TokenUserDetail, get_current_active_user, get_user_with_email
 
 from passlib.context import CryptContext
@@ -295,6 +297,7 @@ async def standalone_singup(
 @router.post("/signuptoken")
 async def thirparty_singup(
     #form_data: UserAuthData, 
+    request: Request,
     current_user: TokenUserDetail = Depends(get_current_active_user),
     myhd: cf.MyHeaderData = Depends(cf.get_header_data) 
     ):
@@ -304,6 +307,9 @@ async def thirparty_singup(
         if not current_user.reg_status:
             print(current_user)
             print("inside thirdparty signup")
+            print('base url - ',request.base_url)
+            print('url - ',request.url)
+            print('client - ',request.client)
             print(myhd)
             data = {"userid":current_user.id, 
                     "username":current_user.name, 
@@ -327,23 +333,28 @@ async def thirparty_singup(
     except Exception:
         raise HTTPException(
             status_code=status.HTTP_412_PRECONDITION_FAILED,
-            detail= {'error':True,'message': current_user.email + ' is ' + str(ed)},
+            detail= {'error':True,'message': current_user.email + ' : ' + str(ed)},
             headers={"WWW-Authenticate": "Bearer"},
         )
 
     #userdetails = {"displayname":"","email":data["useremail"],"phonenumber":"","photourl":"","providerId":"nat","uid":current_user.id}    
     tt =  'Registration successful for ' + data["useremail"] + '. Verify your email before login.'
-    return {'error':False,'message': tt}
+    return {'detail':{'error':False,'message': tt}}
 
 
 @router.post("/signupemail")
 async def signupemail(
+        request: Request,
         useremail: supemailResp,
-        myhd: cf.MyHeaderData = Depends(cf.get_header_data) 
+        myhd: cf.MyHeaderData = Depends(cf.get_header_data),         
         ):
-
+    print('base url - ',request.base_url)
+    print('url - ',request.url)
+    print('client - ',request.client)
+    print("going inside signupemail")
     data = {"useremail":useremail.useremail, 
             **myhd}
+    
     try:
         try:        
             userdb = await db.qry_excute(db.queries.reg_chk_with_email,data)
@@ -389,12 +400,12 @@ async def signupemail(
         print("Final excel")
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
-            detail= {'error':True,'message':useremail.useremail + ' is ' + str(e)},
+            detail= {'error':True,'message':useremail.useremail + ' : ' + str(e)},
             #detail="Session creation.  Failed due to Technical issue",
             headers={"WWW-Authenticate": "Bearer"},
         )            
     tt =  'Registration successful for ' + useremail.useremail + '. Verify your email before login.'
-    return {'error':False,'message': tt}
+    return {'detail':{'error':False,'message': tt}}
 
 
 

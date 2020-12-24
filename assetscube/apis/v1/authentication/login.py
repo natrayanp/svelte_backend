@@ -14,17 +14,19 @@ router = APIRouter()
 
 @router.post("/logintoken")
 async def thirparty_singup(
-    #form_data: UserAuthData, 
+    #form_data: UserAuthData,     
     current_user: TokenUserDetail = Depends(get_current_active_user),
     myhd: cf.MyHeaderData = Depends(cf.get_header_data) 
     ):
     #current_user: TokenUserDetail = cur_cur(oprtype = 'singup'),
+    print("inside token login")
     print(current_user)
+ 
+    
     ed = ''
     try:
         if current_user.reg_status:
-            print(current_user)
-            print("inside thirdparty signup")
+            print(current_user)            
             print(myhd)
             data = {"userid":current_user.id, 
                     **myhd}
@@ -49,11 +51,12 @@ async def thirparty_singup(
             raise Exception("Not a registered users")   
 
     except Exception:
+        print('catching the error')
         raise HTTPException(
             status_code=status.HTTP_412_PRECONDITION_FAILED,
             detail= {'error':True,'message': current_user.email + ' : ' + str(ed)},
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    tt =  {'sessionid':new_sessid}
-    return {'error':False,'message': tt}
+    tt =  'Auth successful'
+    return {'detail':{'error':False,'message': tt,'sessionid':new_sessid}}

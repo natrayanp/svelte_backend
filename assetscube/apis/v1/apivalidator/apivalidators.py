@@ -171,11 +171,14 @@ async def get_current_active_user(
     except Exception as e:
         print("insdie this exce")
         print(e)
+        raise e
+        '''
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail= str(e),
             headers={"WWW-Authenticate": "Bearer"},
         )
+        '''
     print('returning')
     print(current_user)
     return current_user
